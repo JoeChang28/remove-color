@@ -3,26 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>質感影像去背工具 - 專業修復版</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>StoryWed Color Magic | 質感影像去背</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Serif+TC:wght@300;400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #d1bfae; 
-            --primary-hover: #bda895;
-            --secondary-color: #e8ded5;
-            --bg-color: #fcfbf9;
-            --text-color: #5c534f;
-            --box-shadow: 0 8px 25px rgba(189, 168, 149, 0.15);
-            --border-radius: 12px;
+            /* 專屬質感色系：香檳金、象牙白、暖灰 */
+            --primary-color: #C1A68D; 
+            --primary-hover: #A88F78;
+            --bg-page: #FDFCFB;
+            --bg-panel: #FFFFFF;
+            --border-light: #F0EBE6;
+            --text-main: #4A4238;
+            --text-muted: #9E9389;
+            --shadow-elegant: 0 12px 35px rgba(168, 143, 120, 0.08);
+            --border-radius: 16px;
         }
 
         body {
-            font-family: 'Noto Serif TC', serif;
-            background-color: var(--bg-color);
-            background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
-            color: var(--text-color);
+            font-family: 'Lato', 'Noto Serif TC', serif;
+            background-color: var(--bg-page);
+            background-image: radial-gradient(circle at 50% 0%, #ffffff 0%, #f7f5f2 100%);
+            color: var(--text-main);
             margin: 0;
-            padding: 40px 20px;
+            padding: 50px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -30,169 +33,213 @@
         }
 
         .container {
-            background: #ffffff;
-            padding: 40px;
+            background: var(--bg-panel);
+            padding: 45px 50px;
             border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            max-width: 1050px;
+            box-shadow: var(--shadow-elegant);
+            max-width: 1250px;
             width: 100%;
             text-align: center;
+            border: 1px solid rgba(193, 166, 141, 0.2);
             transition: all 0.3s ease;
-            border: 2px dashed transparent;
         }
         .container.dragover {
             border-color: var(--primary-color);
-            background-color: #fdfaf7;
-            transform: scale(1.01);
+            background-color: #FAF8F5;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(168, 143, 120, 0.15);
+        }
+
+        .header-section {
+            margin-bottom: 35px;
         }
 
         h1 {
+            font-family: 'Cormorant Garamond', 'Noto Serif TC', serif;
             font-weight: 600;
-            color: #8c7b70;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
+            font-size: 2.2rem;
+            color: var(--primary-hover);
+            margin: 0 0 10px 0;
+            letter-spacing: 3px;
+        }
+        h1 span {
+            font-style: italic;
+            font-weight: 400;
         }
 
         p.subtitle {
+            font-family: 'Lato', 'Noto Serif TC', sans-serif;
             font-size: 0.95rem;
-            color: #a3968e;
-            margin-bottom: 30px;
+            color: var(--text-muted);
+            margin: 0;
+            letter-spacing: 1.5px;
         }
 
+        /* 工具列設計優化：更輕盈的卡片感 */
         .toolbar {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 12px;
             justify-content: center;
             align-items: center;
-            margin-bottom: 25px;
-            padding: 20px;
-            background: #faf8f6;
-            border-radius: var(--border-radius);
-            border: 1px solid #f0ebe6;
+            margin-bottom: 30px;
+            padding: 18px 25px;
+            background: #FCFBF9;
+            border-radius: 50px; /* 圓潤的工具列 */
+            border: 1px solid var(--border-light);
         }
 
         .tool-group {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 0 15px;
-            border-right: 1px solid #e0d8d0;
+            gap: 8px;
+            padding: 0 18px;
+            border-right: 1px solid #EBE5DF;
         }
         .tool-group:last-child {
             border-right: none;
+            padding-right: 0;
         }
 
+        /* 按鈕設計：精緻線框與柔和填色 */
         button, .btn-upload {
-            background-color: #fff;
-            color: var(--text-color);
-            border: 1px solid #d1bfae;
-            padding: 8px 16px;
-            border-radius: 20px;
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid #DCD5CD;
+            padding: 8px 18px;
+            border-radius: 30px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: 'Noto Serif TC', serif;
-            font-size: 0.9rem;
+            transition: all 0.25s ease;
+            font-family: 'Lato', 'Noto Serif TC', sans-serif;
+            font-size: 0.85rem;
             letter-spacing: 1px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
         button:hover, .btn-upload:hover {
-            background-color: var(--secondary-color);
+            border-color: var(--primary-color);
+            color: var(--primary-hover);
+            background-color: #FAF8F5;
         }
         button.active {
             background-color: var(--primary-color);
             color: #fff;
             border-color: var(--primary-color);
+            box-shadow: 0 4px 10px rgba(193, 166, 141, 0.3);
         }
         button:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
-            background-color: #fff;
-            color: var(--text-color);
+            border-color: #EBE5DF;
+            background-color: transparent;
+            color: var(--text-muted);
+            box-shadow: none;
         }
 
-        /* 預覽背景按鈕 */
+        /* 背景預覽按鈕 */
         .btn-bg {
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             padding: 0;
-            border: 2px solid #e0d8d0;
+            border: 1px solid #DCD5CD;
             display: inline-block;
+            transition: transform 0.2s;
         }
+        .btn-bg:hover { transform: scale(1.1); }
         .btn-bg.active {
-            border-color: #8c7b70;
-            box-shadow: 0 0 5px rgba(140, 123, 112, 0.5);
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 0 8px rgba(193, 166, 141, 0.4);
         }
 
         input[type="file"] { display: none; }
         
         input[type="text"] {
-            padding: 8px 12px;
-            border: 1px solid #d1bfae;
+            padding: 7px 12px;
+            border: 1px solid #DCD5CD;
             border-radius: 20px;
-            width: 80px;
+            width: 75px;
             font-family: monospace;
             text-align: center;
-            color: var(--text-color);
+            color: var(--text-main);
             outline: none;
+            background: transparent;
+            font-size: 0.85rem;
         }
+        input[type="text"]:focus { border-color: var(--primary-color); }
 
+        /* 滑桿美化 */
         input[type="range"] {
             accent-color: var(--primary-color);
             cursor: pointer;
-            width: 80px;
+            width: 75px;
+            height: 4px;
+            background: #EBE5DF;
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
         }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
         input[type="color"] {
             -webkit-appearance: none;
             border: none;
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             cursor: pointer;
             padding: 0;
             overflow: hidden;
         }
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-        input[type="color"]::-webkit-color-swatch { border: 2px solid #e0d8d0; border-radius: 50%; }
+        input[type="color"]::-webkit-color-swatch { border: 1px solid #DCD5CD; border-radius: 50%; }
 
         .btn-download {
-            background-color: var(--primary-color);
+            background-color: var(--text-main);
             color: #fff;
-            border: none;
+            border-color: var(--text-main);
         }
         .btn-download:hover {
-            background-color: var(--primary-hover);
+            background-color: #332D26;
             color: #fff;
+            border-color: #332D26;
         }
 
-        /* 畫布與游標區域 */
+        /* 畫布區域 */
         .canvas-wrapper {
             position: relative;
             display: inline-block;
             max-width: 100%;
             overflow: hidden;
-            border-radius: var(--border-radius);
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-            min-height: 300px;
+            border-radius: 8px; /* 內縮一點，更像畫框 */
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.03);
+            min-height: 400px;
             cursor: crosshair;
             transition: background 0.3s ease;
+            user-select: none; 
+            border: 1px solid var(--border-light);
         }
 
         .bg-transparent {
             background-image: 
-                linear-gradient(45deg, #eee 25%, transparent 25%), 
-                linear-gradient(-45deg, #eee 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, #eee 75%), 
-                linear-gradient(-45deg, transparent 75%, #eee 75%);
+                linear-gradient(45deg, #F4F1EE 25%, transparent 25%), 
+                linear-gradient(-45deg, #F4F1EE 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #F4F1EE 75%), 
+                linear-gradient(-45deg, transparent 75%, #F4F1EE 75%);
             background-size: 20px 20px;
             background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-            background-color: transparent;
+            background-color: #FFFFFF;
         }
-
         .bg-solid { background-image: none; }
 
         canvas {
@@ -201,19 +248,31 @@
             height: auto;
         }
 
+        /* 游標與選取框 */
         #brushCursor {
             position: absolute;
             border: 1.5px solid #ffffff;
-            background-color: rgba(209, 191, 174, 0.4);
+            background-color: rgba(193, 166, 141, 0.4); /* 香檳色游標 */
             border-radius: 50%;
             pointer-events: none;
             display: none;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 4px rgba(0,0,0,0.3);
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
             z-index: 10;
         }
-        #brushCursor.mode-restore {
-            background-color: rgba(163, 184, 153, 0.4);
+        #brushCursor.mode-restore { background-color: rgba(163, 184, 153, 0.4); }
+
+        #selectionBox {
+            position: absolute;
+            border: 1.5px dashed var(--primary-color);
+            background-color: rgba(193, 166, 141, 0.1);
+            pointer-events: none;
+            display: none;
+            z-index: 20;
+        }
+        #selectionBox.mode-restore {
+            border-color: #a3b899;
+            background-color: rgba(163, 184, 153, 0.1);
         }
 
         #empty-state {
@@ -221,53 +280,78 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #a3968e;
+            color: var(--text-muted);
             pointer-events: none;
+            font-weight: 300;
+            letter-spacing: 2px;
         }
 
         .mode-hint {
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: #a3968e;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            font-style: italic;
+        }
+        
+        /* 微調標籤文字 */
+        label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+        span[id$="Value"] {
+            display: inline-block;
+            width: 20px;
+            text-align: right;
+            color: var(--text-main);
         }
     </style>
 </head>
 <body>
 
 <div class="container" id="dropZone">
-    <h1>Color Magic 專業去背</h1>
-    <p class="subtitle">即時容差調整、背景檢驗與反向還原，為您呈現完美無瑕的影像。</p>
+    <div class="header-section">
+        <h1>StoryWed <span>Color Magic</span></h1>
+        <p class="subtitle">精品級影像去背與修復工具</p>
+    </div>
 
     <div class="toolbar">
         <div class="tool-group">
-            <label for="imageLoader" class="btn-upload">📁 圖片</label>
+            <label for="imageLoader" class="btn-upload" title="上傳圖片">📁 選擇圖片</label>
             <input type="file" id="imageLoader" accept="image/*">
         </div>
 
         <div class="tool-group">
-            <button id="btnPicker" class="active">🪄 吸管</button>
+            <button id="btnPicker" class="active" title="點選去除色彩">🪄 吸管</button>
             <input type="text" id="hexInput" placeholder="#FFFFFF">
-            <label>容差: <span id="toleranceValue">30</span></label>
+            <label>容差 <span id="toleranceValue">30</span></label>
             <input type="range" id="tolerance" min="0" max="150" value="30">
         </div>
 
         <div class="tool-group">
-            <button id="btnEraser">🧽 抹除</button>
-            <button id="btnRestore">✨ 還原</button>
-            <label>大小: <span id="brushSizeValue">20</span></label>
+            <button id="btnEraser" title="用筆刷手動擦除邊緣">🧽 筆刷抹除</button>
+            <button id="btnRectEraser" title="框選大面積進行擦除">🔲 範圍抹除</button>
+            <button id="btnRestore" title="用筆刷手動恢復原圖">✨ 筆刷還原</button>
+            <button id="btnRectRestore" title="框選大面積恢復原圖">🟩 範圍還原</button>
+            <label>直徑 <span id="brushSizeValue">20</span></label>
             <input type="range" id="brushSize" min="5" max="150" value="20">
         </div>
 
         <div class="tool-group">
-            <label style="font-size: 0.9rem; color: #a3968e;">背景預覽:</label>
-            <button class="btn-bg active" data-bg="transparent" style="background: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\'><rect width=\'10\' height=\'10\' fill=\'%23eee\'/><rect x=\'10\' y=\'10\' width=\'10\' height=\'10\' fill=\'%23eee\'/></svg>') repeat;"></button>
-            <button class="btn-bg" data-bg="#000000" style="background-color: #000000;" title="深色背景 (檢查淺色殘邊)"></button>
-            <button class="btn-bg" data-bg="#ffffff" style="background-color: #ffffff;" title="淺色背景 (檢查深色殘邊)"></button>
-            <input type="color" id="customBgColor" value="#d1bfae" title="自訂預覽顏色">
+            <label>底色:</label>
+            <button class="btn-bg active" data-bg="transparent" style="background: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\'><rect width=\'10\' height=\'10\' fill=\'%23F4F1EE\'/><rect x=\'10\' y=\'10\' width=\'10\' height=\'10\' fill=\'%23F4F1EE\'/></svg>') repeat;" title="透明背景"></button>
+            <button class="btn-bg" data-bg="#1A1816" style="background-color: #1A1816;" title="深色背景 (檢查淺色殘邊)"></button>
+            <button class="btn-bg" data-bg="#FFFFFF" style="background-color: #FFFFFF;" title="淺色背景 (檢查深色殘邊)"></button>
+            <input type="color" id="customBgColor" value="#C1A68D" title="自訂預覽顏色">
         </div>
 
         <div class="tool-group">
-            <button id="btnUndo" disabled>↩️ 復原</button>
+            <button id="btnUndo" disabled title="復原 (Undo)">↩️ 復原</button>
+            <button id="btnRedo" disabled title="重做 (Redo)">↪️ 重做</button>
+        </div>
+
+        <div class="tool-group">
             <button id="btnDownload" class="btn-download" disabled>📥 下載 PNG</button>
         </div>
     </div>
@@ -275,6 +359,7 @@
     <div class="canvas-wrapper bg-transparent" id="canvasWrapper">
         <div id="empty-state">請點擊上方按鈕或將圖片拖曳至此處</div>
         <div id="brushCursor"></div>
+        <div id="selectionBox"></div>
         <canvas id="canvas"></canvas>
     </div>
     <div class="mode-hint" id="modeHint">
@@ -288,15 +373,20 @@
     const canvasWrapper = document.getElementById('canvasWrapper');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    const brushCursor = document.getElementById('brushCursor');
     
+    // UI 元素
+    const brushCursor = document.getElementById('brushCursor');
+    const selectionBox = document.getElementById('selectionBox');
     const btnPicker = document.getElementById('btnPicker');
     const btnEraser = document.getElementById('btnEraser');
+    const btnRectEraser = document.getElementById('btnRectEraser');
     const btnRestore = document.getElementById('btnRestore');
+    const btnRectRestore = document.getElementById('btnRectRestore');
     const hexInput = document.getElementById('hexInput');
     const toleranceSlider = document.getElementById('tolerance');
     const brushSizeSlider = document.getElementById('brushSize');
     const btnUndo = document.getElementById('btnUndo');
+    const btnRedo = document.getElementById('btnRedo'); // 重做按鈕
     const btnDownload = document.getElementById('btnDownload');
     const modeHint = document.getElementById('modeHint');
     const bgButtons = document.querySelectorAll('.btn-bg');
@@ -304,19 +394,21 @@
 
     let currentMode = 'picker';
     let isDrawing = false;
-    let lastPos = { x: 0, y: 0 };
+    let isDraggingRect = false;
     
-    // 歷史紀錄相關變數
+    let lastPos = { x: 0, y: 0, cssX: 0, cssY: 0 };
+    let currentRectEndPos = { x: 0, y: 0 }; 
+    
+    // 歷史紀錄陣列 (Undo & Redo)
     let historyStack = [];
-    // 儲存「當下這一步操作前」的畫面快取，確保滑桿來回拉動時，能以此快取為基礎計算
+    let redoStack = []; 
     let activeBaseData = null; 
 
-    // 保留最原始載入的照片，供還原筆刷使用
     const originalCanvas = document.createElement('canvas');
     const originalCtx = originalCanvas.getContext('2d');
 
     // ==========================================
-    // 0. 背景預覽切換
+    // 0. 背景預覽
     // ==========================================
     function setPreviewBackground(color, isTransparent) {
         bgButtons.forEach(btn => btn.classList.remove('active'));
@@ -339,7 +431,7 @@
     customBgColor.addEventListener('input', e => setPreviewBackground(e.target.value, false));
 
     // ==========================================
-    // 1. 圖片載入與歷史紀錄邏輯
+    // 1. 圖片載入與 Undo/Redo 核心邏輯
     // ==========================================
     function loadImage(file) {
         if (!file || !file.type.startsWith('image/')) return;
@@ -357,8 +449,11 @@
                 originalCanvas.height = img.height;
                 originalCtx.drawImage(img, 0, 0);
                 
+                // 載入新圖片時清空紀錄
                 historyStack = [];
-                btnUndo.disabled = true;
+                redoStack = [];
+                updateUndoRedoButtons();
+                
                 btnDownload.disabled = false;
                 setMode('picker');
             }
@@ -372,21 +467,52 @@
     dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
     dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); loadImage(e.dataTransfer.files[0]); });
 
-    // 核心重構：儲存當下畫面進入歷史紀錄
+    // 更新按鈕狀態
+    function updateUndoRedoButtons() {
+        btnUndo.disabled = historyStack.length === 0;
+        btnRedo.disabled = redoStack.length === 0;
+    }
+
+    // 每次進行新操作前，儲存當前狀態，並清空 Redo 堆疊
     function saveStateToHistory() {
         if (canvas.width === 0) return;
         const currentData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         historyStack.push(currentData);
-        if (historyStack.length > 20) historyStack.shift();
-        btnUndo.disabled = historyStack.length === 0;
+        if (historyStack.length > 20) historyStack.shift(); // 最多保留 20 步
+        
+        redoStack = []; // 一旦有新操作，未來的「重做」就會失效
+        updateUndoRedoButtons();
     }
 
+    // 復原 (Undo)
     btnUndo.addEventListener('click', () => {
         if (historyStack.length > 0) {
+            // 先將當前畫面存入 redoStack
+            const currentData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            redoStack.push(currentData);
+            
+            // 取出上一步驟並畫出
             const previousState = historyStack.pop();
             ctx.putImageData(previousState, 0, 0);
-            activeBaseData = previousState; // 將回退的畫面設為基礎快取
-            btnUndo.disabled = historyStack.length === 0;
+            activeBaseData = previousState; // 確保容差滑桿能基於這一步運算
+            
+            updateUndoRedoButtons();
+        }
+    });
+
+    // 重做 (Redo)
+    btnRedo.addEventListener('click', () => {
+        if (redoStack.length > 0) {
+            // 先將當前畫面存入 historyStack
+            const currentData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            historyStack.push(currentData);
+            
+            // 取出下一步驟並畫出
+            const nextState = redoStack.pop();
+            ctx.putImageData(nextState, 0, 0);
+            activeBaseData = nextState; // 確保容差滑桿能基於這一步運算
+            
+            updateUndoRedoButtons();
         }
     });
 
@@ -395,41 +521,51 @@
     // ==========================================
     function setMode(mode) {
         currentMode = mode;
-        btnPicker.classList.remove('active');
-        btnEraser.classList.remove('active');
-        btnRestore.classList.remove('active');
+        [btnPicker, btnEraser, btnRectEraser, btnRestore, btnRectRestore].forEach(btn => btn.classList.remove('active'));
         brushCursor.style.display = 'none';
+        selectionBox.style.display = 'none';
         
         if (mode === 'picker') {
             btnPicker.classList.add('active');
             canvasWrapper.style.cursor = 'crosshair';
-            modeHint.textContent = '目前模式：吸管點選（請在圖片上點擊欲去除的顏色，並可隨時拉動容差滑桿調整）';
+            modeHint.textContent = '目前模式：吸管點選（點擊欲去除的顏色，並可隨時拉動容差滑桿調整）';
         } else if (mode === 'eraser') {
             btnEraser.classList.add('active');
             canvasWrapper.style.cursor = 'none';
             brushCursor.classList.remove('mode-restore');
-            modeHint.textContent = '目前模式：抹除（按住左鍵塗抹，可手動擦除背景）';
+            modeHint.textContent = '目前模式：筆刷抹除（按住左鍵塗抹，可手動精細擦除邊緣）';
+        } else if (mode === 'rect-eraser') {
+            btnRectEraser.classList.add('active');
+            canvasWrapper.style.cursor = 'crosshair';
+            selectionBox.classList.remove('mode-restore');
+            modeHint.textContent = '目前模式：範圍抹除（按住左鍵拉出矩形，放開後抹除該區域）';
         } else if (mode === 'restore') {
             btnRestore.classList.add('active');
             canvasWrapper.style.cursor = 'none';
             brushCursor.classList.add('mode-restore');
-            modeHint.textContent = '目前模式：還原（按住左鍵塗抹，可將去背區域恢復為原圖）';
+            modeHint.textContent = '目前模式：筆刷還原（按住左鍵塗抹，將去背區域恢復為原圖）';
+        } else if (mode === 'rect-restore') {
+            btnRectRestore.classList.add('active');
+            canvasWrapper.style.cursor = 'crosshair';
+            selectionBox.classList.add('mode-restore');
+            modeHint.textContent = '目前模式：範圍還原（按住左鍵拉出矩形，放開後恢復該區域原圖）';
         }
     }
 
     btnPicker.addEventListener('click', () => setMode('picker'));
     btnEraser.addEventListener('click', () => setMode('eraser'));
+    btnRectEraser.addEventListener('click', () => setMode('rect-eraser'));
     btnRestore.addEventListener('click', () => setMode('restore'));
+    btnRectRestore.addEventListener('click', () => setMode('rect-restore'));
 
     // ==========================================
-    // 3. 吸管去背運算邏輯 (帶入基礎快取)
+    // 3. 吸管去背運算
     // ==========================================
     function hexToRgb(hex) {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : null;
     }
 
-    // 將 sourceData 獨立出來，確保運算不會疊加失真
     function removeColor(targetColor, tolerance, sourceData) {
         if (!sourceData) return;
         const currentImageData = new ImageData(new Uint8ClampedArray(sourceData.data), canvas.width, canvas.height);
@@ -447,19 +583,11 @@
         ctx.putImageData(currentImageData, 0, 0);
     }
 
-    // ==========================================
-    // 4. 動態互動與即時容差調整
-    // ==========================================
-    
-    // 即時容差滑桿：當顏色代碼不變時，隨時拉動即時反應
     toleranceSlider.addEventListener('input', (e) => {
         document.getElementById('toleranceValue').textContent = e.target.value;
         if (currentMode === 'picker' && activeBaseData) {
             const rgb = hexToRgb(hexInput.value);
-            if (rgb) {
-                // 這裡最關鍵：我們將去背演算法套用在「吸管點下那瞬間的快取」上，而非被破壞後的畫布
-                removeColor(rgb, parseInt(e.target.value), activeBaseData);
-            }
+            if (rgb) removeColor(rgb, parseInt(e.target.value), activeBaseData);
         }
     });
 
@@ -469,37 +597,57 @@
         const rgb = hexToRgb(hex);
         if (rgb) {
             setMode('picker');
-            saveStateToHistory(); // 確保開始新動作前先存檔
+            saveStateToHistory(); 
             activeBaseData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             removeColor(rgb, parseInt(toleranceSlider.value), activeBaseData);
         }
     });
 
-    // 畫布點擊與塗抹處理
+    // ==========================================
+    // 4. 滑鼠互動控制
+    // ==========================================
+    function getMousePos(e) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (e.clientX - rect.left) * (canvas.width / rect.width),
+            y: (e.clientY - rect.top) * (canvas.height / rect.height),
+            cssX: e.clientX - rect.left,
+            cssY: e.clientY - rect.top
+        };
+    }
+
     canvasWrapper.addEventListener('mousedown', function(e) {
         if (canvas.width === 0) return;
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const pos = { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
+        const pos = getMousePos(e);
 
         if (currentMode === 'picker') {
-            // 每次點下吸管，代表確認了上一個步驟。先存入歷史，並抓取當下畫面作為新的快取
             saveStateToHistory();
             activeBaseData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
             const pixelIndex = (Math.floor(pos.y) * canvas.width + Math.floor(pos.x)) * 4;
             const targetColor = [
                 activeBaseData.data[pixelIndex], 
                 activeBaseData.data[pixelIndex+1], 
                 activeBaseData.data[pixelIndex+2]
             ];
-            
             hexInput.value = "#" + targetColor.map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
-            
             removeColor(targetColor, parseInt(toleranceSlider.value), activeBaseData);
+            
+        } else if (currentMode.startsWith('rect-')) {
+            isDraggingRect = true;
+            lastPos = pos;
+            currentRectEndPos = pos;
+            
+            selectionBox.style.display = 'block';
+            selectionBox.style.left = pos.cssX + 'px';
+            selectionBox.style.top = pos.cssY + 'px';
+            selectionBox.style.width = '0px';
+            selectionBox.style.height = '0px';
+            
+            saveStateToHistory();
+            activeBaseData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            
         } else {
-            saveStateToHistory(); // 開始塗抹前存檔
+            saveStateToHistory();
             activeBaseData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             isDrawing = true;
             lastPos = pos;
@@ -507,7 +655,71 @@
         }
     });
 
-    // 筆刷塗抹邏輯
+    canvasWrapper.addEventListener('mousemove', function(e) {
+        if (!e || canvas.width === 0) return;
+        const rect = canvas.getBoundingClientRect();
+        const pos = getMousePos(e);
+
+        if ((currentMode === 'eraser' || currentMode === 'restore') && 
+            e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+            brushCursor.style.display = 'block';
+            const visualSize = parseInt(brushSizeSlider.value) * (rect.width / canvas.width);
+            brushCursor.style.width = `${visualSize}px`;
+            brushCursor.style.height = `${visualSize}px`;
+            brushCursor.style.left = `${pos.cssX}px`;
+            brushCursor.style.top = `${pos.cssY}px`;
+        } else {
+            brushCursor.style.display = 'none';
+        }
+
+        if (isDraggingRect && currentMode.startsWith('rect-')) {
+            currentRectEndPos = pos;
+            const left = Math.min(lastPos.cssX, pos.cssX);
+            const top = Math.min(lastPos.cssY, pos.cssY);
+            const width = Math.abs(pos.cssX - lastPos.cssX);
+            const height = Math.abs(pos.cssY - lastPos.cssY);
+            
+            selectionBox.style.left = left + 'px';
+            selectionBox.style.top = top + 'px';
+            selectionBox.style.width = width + 'px';
+            selectionBox.style.height = height + 'px';
+            return; 
+        }
+
+        if (isDrawing) applyBrush(pos);
+    });
+
+    window.addEventListener('mouseup', function() {
+        if (isDrawing) {
+            isDrawing = false;
+            ctx.globalCompositeOperation = 'source-over';
+        }
+        
+        if (isDraggingRect && currentMode.startsWith('rect-')) {
+            isDraggingRect = false;
+            selectionBox.style.display = 'none'; 
+
+            const canvasX = Math.min(lastPos.x, currentRectEndPos.x);
+            const canvasY = Math.min(lastPos.y, currentRectEndPos.y);
+            const canvasW = Math.abs(currentRectEndPos.x - lastPos.x);
+            const canvasH = Math.abs(currentRectEndPos.y - lastPos.y);
+
+            if (canvasW > 0 && canvasH > 0) {
+                if (currentMode === 'rect-eraser') {
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.fillRect(canvasX, canvasY, canvasW, canvasH);
+                } else if (currentMode === 'rect-restore') {
+                    ctx.globalCompositeOperation = 'source-over';
+                    ctx.drawImage(originalCanvas, canvasX, canvasY, canvasW, canvasH, canvasX, canvasY, canvasW, canvasH);
+                }
+                ctx.globalCompositeOperation = 'source-over'; 
+            }
+        }
+    });
+
+    canvasWrapper.addEventListener('mouseleave', () => { brushCursor.style.display = 'none'; });
+    brushSizeSlider.addEventListener('input', (e) => { document.getElementById('brushSizeValue').textContent = e.target.value; });
+
     function applyBrush(currPos) {
         const size = parseInt(brushSizeSlider.value);
         if (currentMode === 'eraser') {
@@ -541,47 +753,13 @@
         lastPos = currPos;
     }
 
-    canvasWrapper.addEventListener('mousemove', function(e) {
-        if (!e) return;
-        const rect = canvas.getBoundingClientRect();
-        
-        // 處理動態筆刷游標預覽
-        if (currentMode !== 'picker' && e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
-            brushCursor.style.display = 'block';
-            const visualSize = parseInt(brushSizeSlider.value) * (rect.width / canvas.width);
-            brushCursor.style.width = `${visualSize}px`;
-            brushCursor.style.height = `${visualSize}px`;
-            brushCursor.style.left = `${e.clientX - rect.left}px`;
-            brushCursor.style.top = `${e.clientY - rect.top}px`;
-        } else {
-            brushCursor.style.display = 'none';
-        }
-
-        // 處理拖曳塗抹
-        if (!isDrawing) return;
-        applyBrush({
-            x: (e.clientX - rect.left) * (canvas.width / rect.width),
-            y: (e.clientY - rect.top) * (canvas.height / rect.height)
-        });
-    });
-
-    window.addEventListener('mouseup', function() {
-        if (isDrawing) {
-            isDrawing = false;
-            ctx.globalCompositeOperation = 'source-over';
-        }
-    });
-
-    canvasWrapper.addEventListener('mouseleave', () => { brushCursor.style.display = 'none'; });
-    brushSizeSlider.addEventListener('input', (e) => { document.getElementById('brushSizeValue').textContent = e.target.value; });
-
     // ==========================================
     // 5. 輸出下載
     // ==========================================
     btnDownload.addEventListener('click', () => {
         if (canvas.width === 0) return;
         const link = document.createElement('a');
-        link.download = 'story_perfect_transparent.png';
+        link.download = 'StoryWed_ColorMagic.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
     });
