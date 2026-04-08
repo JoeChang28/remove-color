@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StoryWed Color Magic | 質感影像去背</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Serif+TC:wght@300;400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/upng-js@2.1.0/UPNG.min.js"></script>
     <style>
         :root {
-            /* 專屬質感色系：香檳金、象牙白、暖灰 */
             --primary-color: #C1A68D; 
             --primary-hover: #A88F78;
+            --secondary-color: #8C7B70;
             --bg-page: #FDFCFB;
             --bg-panel: #FFFFFF;
             --border-light: #F0EBE6;
@@ -37,7 +39,7 @@
             padding: 45px 50px;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-elegant);
-            max-width: 1250px;
+            max-width: 1300px;
             width: 100%;
             text-align: center;
             border: 1px solid rgba(193, 166, 141, 0.2);
@@ -50,9 +52,7 @@
             box-shadow: 0 15px 40px rgba(168, 143, 120, 0.15);
         }
 
-        .header-section {
-            margin-bottom: 35px;
-        }
+        .header-section { margin-bottom: 35px; }
 
         h1 {
             font-family: 'Cormorant Garamond', 'Noto Serif TC', serif;
@@ -62,10 +62,7 @@
             margin: 0 0 10px 0;
             letter-spacing: 3px;
         }
-        h1 span {
-            font-style: italic;
-            font-weight: 400;
-        }
+        h1 span { font-style: italic; font-weight: 400; }
 
         p.subtitle {
             font-family: 'Lato', 'Noto Serif TC', sans-serif;
@@ -75,7 +72,6 @@
             letter-spacing: 1.5px;
         }
 
-        /* 工具列設計優化：更輕盈的卡片感 */
         .toolbar {
             display: flex;
             flex-wrap: wrap;
@@ -85,7 +81,7 @@
             margin-bottom: 30px;
             padding: 18px 25px;
             background: #FCFBF9;
-            border-radius: 50px; /* 圓潤的工具列 */
+            border-radius: 50px;
             border: 1px solid var(--border-light);
         }
 
@@ -96,12 +92,8 @@
             padding: 0 18px;
             border-right: 1px solid #EBE5DF;
         }
-        .tool-group:last-child {
-            border-right: none;
-            padding-right: 0;
-        }
+        .tool-group:last-child { border-right: none; padding-right: 0; }
 
-        /* 按鈕設計：精緻線框與柔和填色 */
         button, .btn-upload {
             background-color: transparent;
             color: var(--text-main);
@@ -117,7 +109,7 @@
             align-items: center;
             gap: 6px;
         }
-        button:hover, .btn-upload:hover {
+        button:hover:not(:disabled), .btn-upload:hover {
             border-color: var(--primary-color);
             color: var(--primary-hover);
             background-color: #FAF8F5;
@@ -134,10 +126,8 @@
             border-color: #EBE5DF;
             background-color: transparent;
             color: var(--text-muted);
-            box-shadow: none;
         }
 
-        /* 背景預覽按鈕 */
         .btn-bg {
             width: 28px;
             height: 28px;
@@ -154,7 +144,6 @@
         }
 
         input[type="file"] { display: none; }
-        
         input[type="text"] {
             padding: 7px 12px;
             border: 1px solid #DCD5CD;
@@ -168,8 +157,6 @@
             font-size: 0.85rem;
         }
         input[type="text"]:focus { border-color: var(--primary-color); }
-
-        /* 滑桿美化 */
         input[type="range"] {
             accent-color: var(--primary-color);
             cursor: pointer;
@@ -190,7 +177,6 @@
             transition: transform 0.1s;
         }
         input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-
         input[type="color"] {
             -webkit-appearance: none;
             border: none;
@@ -204,24 +190,34 @@
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         input[type="color"]::-webkit-color-swatch { border: 1px solid #DCD5CD; border-radius: 50%; }
 
+        /* 下載按鈕專屬樣式 */
         .btn-download {
             background-color: var(--text-main);
             color: #fff;
             border-color: var(--text-main);
         }
-        .btn-download:hover {
+        .btn-download:hover:not(:disabled) {
             background-color: #332D26;
             color: #fff;
             border-color: #332D26;
         }
+        .btn-compress {
+            background-color: var(--secondary-color);
+            color: #fff;
+            border-color: var(--secondary-color);
+        }
+        .btn-compress:hover:not(:disabled) {
+            background-color: #7A695E;
+            color: #fff;
+            border-color: #7A695E;
+        }
 
-        /* 畫布區域 */
         .canvas-wrapper {
             position: relative;
             display: inline-block;
             max-width: 100%;
             overflow: hidden;
-            border-radius: 8px; /* 內縮一點，更像畫框 */
+            border-radius: 8px;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.03);
             min-height: 400px;
             cursor: crosshair;
@@ -229,7 +225,6 @@
             user-select: none; 
             border: 1px solid var(--border-light);
         }
-
         .bg-transparent {
             background-image: 
                 linear-gradient(45deg, #F4F1EE 25%, transparent 25%), 
@@ -241,18 +236,12 @@
             background-color: #FFFFFF;
         }
         .bg-solid { background-image: none; }
+        canvas { display: block; max-width: 100%; height: auto; }
 
-        canvas {
-            display: block;
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* 游標與選取框 */
         #brushCursor {
             position: absolute;
             border: 1.5px solid #ffffff;
-            background-color: rgba(193, 166, 141, 0.4); /* 香檳色游標 */
+            background-color: rgba(193, 166, 141, 0.4);
             border-radius: 50%;
             pointer-events: none;
             display: none;
@@ -261,7 +250,6 @@
             z-index: 10;
         }
         #brushCursor.mode-restore { background-color: rgba(163, 184, 153, 0.4); }
-
         #selectionBox {
             position: absolute;
             border: 1.5px dashed var(--primary-color);
@@ -270,11 +258,7 @@
             display: none;
             z-index: 20;
         }
-        #selectionBox.mode-restore {
-            border-color: #a3b899;
-            background-color: rgba(163, 184, 153, 0.1);
-        }
-
+        #selectionBox.mode-restore { border-color: #a3b899; background-color: rgba(163, 184, 153, 0.1); }
         #empty-state {
             position: absolute;
             top: 50%;
@@ -285,7 +269,6 @@
             font-weight: 300;
             letter-spacing: 2px;
         }
-
         .mode-hint {
             margin-top: 20px;
             font-size: 0.85rem;
@@ -293,19 +276,8 @@
             letter-spacing: 1px;
             font-style: italic;
         }
-        
-        /* 微調標籤文字 */
-        label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-        }
-        span[id$="Value"] {
-            display: inline-block;
-            width: 20px;
-            text-align: right;
-            color: var(--text-main);
-        }
+        label { font-size: 0.85rem; color: var(--text-muted); letter-spacing: 1px; }
+        span[id$="Value"] { display: inline-block; width: 20px; text-align: right; color: var(--text-main); }
     </style>
 </head>
 <body>
@@ -330,10 +302,10 @@
         </div>
 
         <div class="tool-group">
-            <button id="btnEraser" title="用筆刷手動擦除邊緣">🧽 筆刷抹除</button>
-            <button id="btnRectEraser" title="框選大面積進行擦除">🔲 範圍抹除</button>
-            <button id="btnRestore" title="用筆刷手動恢復原圖">✨ 筆刷還原</button>
-            <button id="btnRectRestore" title="框選大面積恢復原圖">🟩 範圍還原</button>
+            <button id="btnEraser" title="用筆刷手動擦除邊緣">🧽 筆刷</button>
+            <button id="btnRectEraser" title="框選大面積進行擦除">🔲 範圍</button>
+            <button id="btnRestore" title="用筆刷手動恢復原圖">✨ 還原(筆)</button>
+            <button id="btnRectRestore" title="框選大面積恢復原圖">🟩 還原(框)</button>
             <label>直徑 <span id="brushSizeValue">20</span></label>
             <input type="range" id="brushSize" min="5" max="150" value="20">
         </div>
@@ -341,18 +313,19 @@
         <div class="tool-group">
             <label>底色:</label>
             <button class="btn-bg active" data-bg="transparent" style="background: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\'><rect width=\'10\' height=\'10\' fill=\'%23F4F1EE\'/><rect x=\'10\' y=\'10\' width=\'10\' height=\'10\' fill=\'%23F4F1EE\'/></svg>') repeat;" title="透明背景"></button>
-            <button class="btn-bg" data-bg="#1A1816" style="background-color: #1A1816;" title="深色背景 (檢查淺色殘邊)"></button>
-            <button class="btn-bg" data-bg="#FFFFFF" style="background-color: #FFFFFF;" title="淺色背景 (檢查深色殘邊)"></button>
+            <button class="btn-bg" data-bg="#1A1816" style="background-color: #1A1816;" title="深色背景"></button>
+            <button class="btn-bg" data-bg="#FFFFFF" style="background-color: #FFFFFF;" title="淺色背景"></button>
             <input type="color" id="customBgColor" value="#C1A68D" title="自訂預覽顏色">
         </div>
 
         <div class="tool-group">
-            <button id="btnUndo" disabled title="復原 (Undo)">↩️ 復原</button>
-            <button id="btnRedo" disabled title="重做 (Redo)">↪️ 重做</button>
+            <button id="btnUndo" disabled title="復原 (Undo)">↩️</button>
+            <button id="btnRedo" disabled title="重做 (Redo)">↪️</button>
         </div>
 
         <div class="tool-group">
-            <button id="btnDownload" class="btn-download" disabled>📥 下載 PNG</button>
+            <button id="btnDownload" class="btn-download" disabled title="由瀏覽器快速匯出原檔 PNG">📥 原檔 PNG</button>
+            <button id="btnCompressDownload" class="btn-compress" disabled title="保持 100% 畫質與尺寸，進行底層無損深度壓縮">🗜️ 無損深度壓縮 PNG</button>
         </div>
     </div>
 
@@ -374,7 +347,6 @@
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     
-    // UI 元素
     const brushCursor = document.getElementById('brushCursor');
     const selectionBox = document.getElementById('selectionBox');
     const btnPicker = document.getElementById('btnPicker');
@@ -386,8 +358,9 @@
     const toleranceSlider = document.getElementById('tolerance');
     const brushSizeSlider = document.getElementById('brushSize');
     const btnUndo = document.getElementById('btnUndo');
-    const btnRedo = document.getElementById('btnRedo'); // 重做按鈕
+    const btnRedo = document.getElementById('btnRedo');
     const btnDownload = document.getElementById('btnDownload');
+    const btnCompressDownload = document.getElementById('btnCompressDownload'); 
     const modeHint = document.getElementById('modeHint');
     const bgButtons = document.querySelectorAll('.btn-bg');
     const customBgColor = document.getElementById('customBgColor');
@@ -395,11 +368,8 @@
     let currentMode = 'picker';
     let isDrawing = false;
     let isDraggingRect = false;
-    
     let lastPos = { x: 0, y: 0, cssX: 0, cssY: 0 };
     let currentRectEndPos = { x: 0, y: 0 }; 
-    
-    // 歷史紀錄陣列 (Undo & Redo)
     let historyStack = [];
     let redoStack = []; 
     let activeBaseData = null; 
@@ -407,9 +377,7 @@
     const originalCanvas = document.createElement('canvas');
     const originalCtx = originalCanvas.getContext('2d');
 
-    // ==========================================
-    // 0. 背景預覽
-    // ==========================================
+    // 背景預覽
     function setPreviewBackground(color, isTransparent) {
         bgButtons.forEach(btn => btn.classList.remove('active'));
         if (isTransparent) {
@@ -430,9 +398,7 @@
     });
     customBgColor.addEventListener('input', e => setPreviewBackground(e.target.value, false));
 
-    // ==========================================
-    // 1. 圖片載入與 Undo/Redo 核心邏輯
-    // ==========================================
+    // 圖片載入
     function loadImage(file) {
         if (!file || !file.type.startsWith('image/')) return;
         const reader = new FileReader();
@@ -449,12 +415,12 @@
                 originalCanvas.height = img.height;
                 originalCtx.drawImage(img, 0, 0);
                 
-                // 載入新圖片時清空紀錄
                 historyStack = [];
                 redoStack = [];
                 updateUndoRedoButtons();
                 
                 btnDownload.disabled = false;
+                btnCompressDownload.disabled = false;
                 setMode('picker');
             }
             img.src = event.target.result;
@@ -467,58 +433,40 @@
     dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
     dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); loadImage(e.dataTransfer.files[0]); });
 
-    // 更新按鈕狀態
     function updateUndoRedoButtons() {
         btnUndo.disabled = historyStack.length === 0;
         btnRedo.disabled = redoStack.length === 0;
     }
 
-    // 每次進行新操作前，儲存當前狀態，並清空 Redo 堆疊
     function saveStateToHistory() {
         if (canvas.width === 0) return;
         const currentData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         historyStack.push(currentData);
-        if (historyStack.length > 20) historyStack.shift(); // 最多保留 20 步
-        
-        redoStack = []; // 一旦有新操作，未來的「重做」就會失效
+        if (historyStack.length > 20) historyStack.shift();
+        redoStack = []; 
         updateUndoRedoButtons();
     }
 
-    // 復原 (Undo)
     btnUndo.addEventListener('click', () => {
         if (historyStack.length > 0) {
-            // 先將當前畫面存入 redoStack
-            const currentData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            redoStack.push(currentData);
-            
-            // 取出上一步驟並畫出
+            redoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
             const previousState = historyStack.pop();
             ctx.putImageData(previousState, 0, 0);
-            activeBaseData = previousState; // 確保容差滑桿能基於這一步運算
-            
+            activeBaseData = previousState; 
             updateUndoRedoButtons();
         }
     });
 
-    // 重做 (Redo)
     btnRedo.addEventListener('click', () => {
         if (redoStack.length > 0) {
-            // 先將當前畫面存入 historyStack
-            const currentData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            historyStack.push(currentData);
-            
-            // 取出下一步驟並畫出
+            historyStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
             const nextState = redoStack.pop();
             ctx.putImageData(nextState, 0, 0);
-            activeBaseData = nextState; // 確保容差滑桿能基於這一步運算
-            
+            activeBaseData = nextState; 
             updateUndoRedoButtons();
         }
     });
 
-    // ==========================================
-    // 2. 模式切換管理
-    // ==========================================
     function setMode(mode) {
         currentMode = mode;
         [btnPicker, btnEraser, btnRectEraser, btnRestore, btnRectRestore].forEach(btn => btn.classList.remove('active'));
@@ -558,9 +506,6 @@
     btnRestore.addEventListener('click', () => setMode('restore'));
     btnRectRestore.addEventListener('click', () => setMode('rect-restore'));
 
-    // ==========================================
-    // 3. 吸管去背運算
-    // ==========================================
     function hexToRgb(hex) {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : null;
@@ -573,11 +518,7 @@
 
         for (let i = 0; i < data.length; i += 4) {
             if(data[i+3] === 0) continue; 
-            const distance = Math.sqrt(
-                Math.pow(data[i] - targetColor[0], 2) + 
-                Math.pow(data[i+1] - targetColor[1], 2) + 
-                Math.pow(data[i+2] - targetColor[2], 2)
-            );
+            const distance = Math.sqrt(Math.pow(data[i] - targetColor[0], 2) + Math.pow(data[i+1] - targetColor[1], 2) + Math.pow(data[i+2] - targetColor[2], 2));
             if (distance <= tolerance) data[i + 3] = 0;
         }
         ctx.putImageData(currentImageData, 0, 0);
@@ -603,9 +544,6 @@
         }
     });
 
-    // ==========================================
-    // 4. 滑鼠互動控制
-    // ==========================================
     function getMousePos(e) {
         const rect = canvas.getBoundingClientRect();
         return {
@@ -636,16 +574,13 @@
             isDraggingRect = true;
             lastPos = pos;
             currentRectEndPos = pos;
-            
             selectionBox.style.display = 'block';
             selectionBox.style.left = pos.cssX + 'px';
             selectionBox.style.top = pos.cssY + 'px';
             selectionBox.style.width = '0px';
             selectionBox.style.height = '0px';
-            
             saveStateToHistory();
             activeBaseData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            
         } else {
             saveStateToHistory();
             activeBaseData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -660,8 +595,7 @@
         const rect = canvas.getBoundingClientRect();
         const pos = getMousePos(e);
 
-        if ((currentMode === 'eraser' || currentMode === 'restore') && 
-            e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+        if ((currentMode === 'eraser' || currentMode === 'restore') && e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
             brushCursor.style.display = 'block';
             const visualSize = parseInt(brushSizeSlider.value) * (rect.width / canvas.width);
             brushCursor.style.width = `${visualSize}px`;
@@ -678,7 +612,6 @@
             const top = Math.min(lastPos.cssY, pos.cssY);
             const width = Math.abs(pos.cssX - lastPos.cssX);
             const height = Math.abs(pos.cssY - lastPos.cssY);
-            
             selectionBox.style.left = left + 'px';
             selectionBox.style.top = top + 'px';
             selectionBox.style.width = width + 'px';
@@ -698,7 +631,6 @@
         if (isDraggingRect && currentMode.startsWith('rect-')) {
             isDraggingRect = false;
             selectionBox.style.display = 'none'; 
-
             const canvasX = Math.min(lastPos.x, currentRectEndPos.x);
             const canvasY = Math.min(lastPos.y, currentRectEndPos.y);
             const canvasW = Math.abs(currentRectEndPos.x - lastPos.x);
@@ -731,17 +663,14 @@
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.stroke();
-        } 
-        else if (currentMode === 'restore') {
+        } else if (currentMode === 'restore') {
             ctx.globalCompositeOperation = 'source-over';
             const dist = Math.hypot(currPos.x - lastPos.x, currPos.y - lastPos.y);
             const steps = Math.max(1, Math.ceil(dist / (size / 4))); 
-            
             for(let i = 0; i <= steps; i++) {
                 const t = i / steps;
                 const x = lastPos.x + (currPos.x - lastPos.x) * t;
                 const y = lastPos.y + (currPos.y - lastPos.y) * t;
-                
                 ctx.save();
                 ctx.beginPath();
                 ctx.arc(x, y, size / 2, 0, Math.PI * 2);
@@ -754,14 +683,57 @@
     }
 
     // ==========================================
-    // 5. 輸出下載
+    // 5. 下載與無損深度壓縮模組
     // ==========================================
+    
+    // 1. 一般原檔下載 (最快)
     btnDownload.addEventListener('click', () => {
         if (canvas.width === 0) return;
         const link = document.createElement('a');
-        link.download = 'StoryWed_ColorMagic.png';
+        link.download = 'StoryWed_ColorMagic_Original.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
+    });
+
+    // 2. 絕對無損壓縮 (維持 100% 畫質與原尺寸，優化檔案結構來縮小 MB 數)
+    btnCompressDownload.addEventListener('click', () => {
+        if (canvas.width === 0) return;
+        
+        // 防呆保護：鎖定按鈕並提示運算中
+        const originalText = btnCompressDownload.innerHTML;
+        btnCompressDownload.innerHTML = '⏳ 深度無損運算中...';
+        btnCompressDownload.disabled = true;
+        btnDownload.disabled = true;
+
+        // 給予瀏覽器極短暫的重繪時間來顯示「運算中」的文字，再進行高強度運算
+        setTimeout(() => {
+            try {
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                
+                // 核心關鍵：將 cnum 參數設為 0
+                // 這會關閉色彩破壞性量化，改為執行深度的 ZLIB / DEFLATE 資料結構優化
+                // 保證顏色、漸層、解析度 100% 原汁原味
+                const compressedPng = UPNG.encode([imgData.data.buffer], canvas.width, canvas.height, 0);
+                
+                const blob = new Blob([compressedPng], { type: 'image/png' });
+                const url = URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.download = 'StoryWed_ColorMagic_Lossless.png';
+                link.href = url;
+                link.click();
+                
+                URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error("壓縮運算失敗:", error);
+                alert("照片像素過於龐大，運算超過瀏覽器負荷。建議直接使用原檔下載。");
+            } finally {
+                // 恢復按鈕狀態
+                btnCompressDownload.innerHTML = originalText;
+                btnCompressDownload.disabled = false;
+                btnDownload.disabled = false;
+            }
+        }, 50);
     });
 
 </script>
