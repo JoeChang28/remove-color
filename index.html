@@ -39,7 +39,7 @@
             padding: 45px 50px;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-elegant);
-            max-width: 1300px;
+            max-width: 1350px; /* 加寬以容納所有專業工具 */
             width: 100%;
             text-align: center;
             border: 1px solid rgba(193, 166, 141, 0.2);
@@ -160,7 +160,7 @@
         input[type="range"] {
             accent-color: var(--primary-color);
             cursor: pointer;
-            width: 75px;
+            width: 70px;
             height: 4px;
             background: #EBE5DF;
             border-radius: 2px;
@@ -212,19 +212,33 @@
             border-color: #7A695E;
         }
 
+        /* 視圖與畫布捲軸區塊 (大幅升級以支援縮放) */
         .canvas-wrapper {
             position: relative;
-            display: inline-block;
-            max-width: 100%;
-            overflow: hidden;
+            width: 100%;
+            max-height: 70vh; /* 限制最大高度，啟動捲軸 */
+            overflow: auto; /* 啟動自由捲動 */
             border-radius: 8px;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.03);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
             min-height: 400px;
-            cursor: crosshair;
-            transition: background 0.3s ease;
-            user-select: none; 
             border: 1px solid var(--border-light);
+            /* 自訂優雅捲軸 */
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) #F4F1EE;
         }
+        .canvas-wrapper::-webkit-scrollbar {
+            width: 10px; height: 10px;
+        }
+        .canvas-wrapper::-webkit-scrollbar-track {
+            background: #F4F1EE; border-radius: 8px;
+        }
+        .canvas-wrapper::-webkit-scrollbar-thumb {
+            background: #DCD5CD; border-radius: 8px;
+        }
+        .canvas-wrapper::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
         .bg-transparent {
             background-image: 
                 linear-gradient(45deg, #F4F1EE 25%, transparent 25%), 
@@ -236,7 +250,18 @@
             background-color: #FFFFFF;
         }
         .bg-solid { background-image: none; }
-        canvas { display: block; max-width: 100%; height: auto; }
+        
+        .canvas-content {
+            position: relative;
+            display: inline-block;
+            vertical-align: top;
+            /* width 和 height 會由 JS 動態隨縮放更新 */
+        }
+
+        canvas {
+            display: block;
+            /* 移除 max-width，讓它可以真正變大超出螢幕 */
+        }
 
         #brushCursor {
             position: absolute;
@@ -259,6 +284,7 @@
             z-index: 20;
         }
         #selectionBox.mode-restore { border-color: #a3b899; background-color: rgba(163, 184, 153, 0.1); }
+        
         #empty-state {
             position: absolute;
             top: 50%;
@@ -290,7 +316,7 @@
 
     <div class="toolbar">
         <div class="tool-group">
-            <label for="imageLoader" class="btn-upload" title="上傳圖片">📁 選擇圖片</label>
+            <label for="imageLoader" class="btn-upload" title="上傳圖片">📁</label>
             <input type="file" id="imageLoader" accept="image/*">
         </div>
 
@@ -299,6 +325,12 @@
             <input type="text" id="hexInput" placeholder="#FFFFFF">
             <label>容差 <span id="toleranceValue">30</span></label>
             <input type="range" id="tolerance" min="0" max="150" value="30">
+        </div>
+
+        <div class="tool-group">
+            <button id="btnZoomOut" title="縮小">− 縮小</button>
+            <span id="zoomValue" style="min-width: 45px; text-align: center; font-size: 0.85rem; color: var(--text-main); font-weight: 600;">100%</span>
+            <button id="btnZoomIn" title="放大">＋ 放大</button>
         </div>
 
         <div class="tool-group">
@@ -311,29 +343,31 @@
         </div>
 
         <div class="tool-group">
-            <label>底色:</label>
-            <button class="btn-bg active" data-bg="transparent" style="background: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\'><rect width=\'10\' height=\'10\' fill=\'%23F4F1EE\'/><rect x=\'10\' y=\'10\' width=\'10\' height=\'10\' fill=\'%23F4F1EE\'/></svg>') repeat;" title="透明背景"></button>
-            <button class="btn-bg" data-bg="#1A1816" style="background-color: #1A1816;" title="深色背景"></button>
-            <button class="btn-bg" data-bg="#FFFFFF" style="background-color: #FFFFFF;" title="淺色背景"></button>
-            <input type="color" id="customBgColor" value="#C1A68D" title="自訂預覽顏色">
-        </div>
-
-        <div class="tool-group">
             <button id="btnUndo" disabled title="復原 (Undo)">↩️</button>
             <button id="btnRedo" disabled title="重做 (Redo)">↪️</button>
         </div>
 
         <div class="tool-group">
-            <button id="btnDownload" class="btn-download" disabled title="由瀏覽器快速匯出原檔 PNG">📥 原檔 PNG</button>
-            <button id="btnCompressDownload" class="btn-compress" disabled title="保持 100% 畫質與尺寸，進行底層無損深度壓縮">🗜️ 無損深度壓縮 PNG</button>
+            <button id="btnDownload" class="btn-download" disabled title="匯出原檔 PNG">📥 原檔 PNG</button>
+            <button id="btnCompressDownload" class="btn-compress" disabled title="保持 100% 畫質，底層無損深度壓縮">🗜️ 深度壓縮</button>
         </div>
+    </div>
+
+    <div style="text-align: right; margin-bottom: 10px; padding-right: 15px;">
+        <label>檢驗底色：</label>
+        <button class="btn-bg active" data-bg="transparent" style="background: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'20\'><rect width=\'10\' height=\'10\' fill=\'%23F4F1EE\'/><rect x=\'10\' y=\'10\' width=\'10\' height=\'10\' fill=\'%23F4F1EE\'/></svg>') repeat;" title="透明背景"></button>
+        <button class="btn-bg" data-bg="#1A1816" style="background-color: #1A1816;" title="深色背景"></button>
+        <button class="btn-bg" data-bg="#FFFFFF" style="background-color: #FFFFFF;" title="淺色背景"></button>
+        <input type="color" id="customBgColor" value="#C1A68D" title="自訂預覽顏色">
     </div>
 
     <div class="canvas-wrapper bg-transparent" id="canvasWrapper">
         <div id="empty-state">請點擊上方按鈕或將圖片拖曳至此處</div>
-        <div id="brushCursor"></div>
-        <div id="selectionBox"></div>
-        <canvas id="canvas"></canvas>
+        <div class="canvas-content" id="canvasContent">
+            <div id="brushCursor"></div>
+            <div id="selectionBox"></div>
+            <canvas id="canvas"></canvas>
+        </div>
     </div>
     <div class="mode-hint" id="modeHint">
         目前模式：吸管點選（請在圖片上點擊欲去除的顏色，並可隨時拉動容差滑桿調整）
@@ -344,6 +378,7 @@
     const dropZone = document.getElementById('dropZone');
     const imageLoader = document.getElementById('imageLoader');
     const canvasWrapper = document.getElementById('canvasWrapper');
+    const canvasContent = document.getElementById('canvasContent');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     
@@ -361,6 +396,9 @@
     const btnRedo = document.getElementById('btnRedo');
     const btnDownload = document.getElementById('btnDownload');
     const btnCompressDownload = document.getElementById('btnCompressDownload'); 
+    const btnZoomIn = document.getElementById('btnZoomIn');
+    const btnZoomOut = document.getElementById('btnZoomOut');
+    const zoomValue = document.getElementById('zoomValue');
     const modeHint = document.getElementById('modeHint');
     const bgButtons = document.querySelectorAll('.btn-bg');
     const customBgColor = document.getElementById('customBgColor');
@@ -370,6 +408,7 @@
     let isDraggingRect = false;
     let lastPos = { x: 0, y: 0, cssX: 0, cssY: 0 };
     let currentRectEndPos = { x: 0, y: 0 }; 
+    
     let historyStack = [];
     let redoStack = []; 
     let activeBaseData = null; 
@@ -377,7 +416,14 @@
     const originalCanvas = document.createElement('canvas');
     const originalCtx = originalCanvas.getContext('2d');
 
-    // 背景預覽
+    // 縮放控制變數
+    let currentZoom = 1;
+    let baseCanvasWidth = 0;
+    let baseCanvasHeight = 0;
+
+    // ==========================================
+    // 0. 背景預覽
+    // ==========================================
     function setPreviewBackground(color, isTransparent) {
         bgButtons.forEach(btn => btn.classList.remove('active'));
         if (isTransparent) {
@@ -398,7 +444,30 @@
     });
     customBgColor.addEventListener('input', e => setPreviewBackground(e.target.value, false));
 
-    // 圖片載入
+    // ==========================================
+    // 1. 圖片載入與縮放初始化
+    // ==========================================
+    function updateZoomUI() {
+        zoomValue.textContent = Math.round(currentZoom * 100) + '%';
+        if(canvas.width > 0) {
+            // 動態調整實際渲染寬高，容器會自動產生捲軸
+            canvas.style.width = (baseCanvasWidth * currentZoom) + 'px';
+            canvas.style.height = (baseCanvasHeight * currentZoom) + 'px';
+        }
+    }
+
+    btnZoomIn.addEventListener('click', () => {
+        currentZoom += 0.25;
+        if(currentZoom > 5) currentZoom = 5; // 限制最大放大 500%
+        updateZoomUI();
+    });
+
+    btnZoomOut.addEventListener('click', () => {
+        currentZoom -= 0.25;
+        if(currentZoom < 0.25) currentZoom = 0.25; // 限制最小縮小 25%
+        updateZoomUI();
+    });
+
     function loadImage(file) {
         if (!file || !file.type.startsWith('image/')) return;
         const reader = new FileReader();
@@ -414,6 +483,15 @@
                 originalCanvas.width = img.width;
                 originalCanvas.height = img.height;
                 originalCtx.drawImage(img, 0, 0);
+                
+                // 計算最適合螢幕的初始大小 (Fit to Wrapper)
+                const wrapperRect = canvasWrapper.getBoundingClientRect();
+                const scaleToFit = Math.min(wrapperRect.width / img.width, 1); // 避免小圖被強制放大
+                baseCanvasWidth = img.width * scaleToFit;
+                baseCanvasHeight = img.height * scaleToFit;
+                
+                currentZoom = 1;
+                updateZoomUI();
                 
                 historyStack = [];
                 redoStack = [];
@@ -433,6 +511,9 @@
     dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
     dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); loadImage(e.dataTransfer.files[0]); });
 
+    // ==========================================
+    // 2. Undo/Redo
+    // ==========================================
     function updateUndoRedoButtons() {
         btnUndo.disabled = historyStack.length === 0;
         btnRedo.disabled = redoStack.length === 0;
@@ -467,6 +548,9 @@
         }
     });
 
+    // ==========================================
+    // 3. 模式與工具切換
+    // ==========================================
     function setMode(mode) {
         currentMode = mode;
         [btnPicker, btnEraser, btnRectEraser, btnRestore, btnRectRestore].forEach(btn => btn.classList.remove('active'));
@@ -476,27 +560,27 @@
         if (mode === 'picker') {
             btnPicker.classList.add('active');
             canvasWrapper.style.cursor = 'crosshair';
-            modeHint.textContent = '目前模式：吸管點選（點擊欲去除的顏色，並可隨時拉動容差滑桿調整）';
+            modeHint.textContent = '目前模式：吸管點選（點選顏色以去除，拉動容差值即時調整範圍）';
         } else if (mode === 'eraser') {
             btnEraser.classList.add('active');
             canvasWrapper.style.cursor = 'none';
             brushCursor.classList.remove('mode-restore');
-            modeHint.textContent = '目前模式：筆刷抹除（按住左鍵塗抹，可手動精細擦除邊緣）';
+            modeHint.textContent = '目前模式：筆刷抹除（放大圖片時，橡皮擦覆蓋範圍會變小，適合修飾髮絲細節）';
         } else if (mode === 'rect-eraser') {
             btnRectEraser.classList.add('active');
             canvasWrapper.style.cursor = 'crosshair';
             selectionBox.classList.remove('mode-restore');
-            modeHint.textContent = '目前模式：範圍抹除（按住左鍵拉出矩形，放開後抹除該區域）';
+            modeHint.textContent = '目前模式：範圍抹除（拉出矩形，放開後瞬間抹除大片背景）';
         } else if (mode === 'restore') {
             btnRestore.classList.add('active');
             canvasWrapper.style.cursor = 'none';
             brushCursor.classList.add('mode-restore');
-            modeHint.textContent = '目前模式：筆刷還原（按住左鍵塗抹，將去背區域恢復為原圖）';
+            modeHint.textContent = '目前模式：筆刷還原（將去背區域恢復為原圖，放大可精細補回遺失細節）';
         } else if (mode === 'rect-restore') {
             btnRectRestore.classList.add('active');
             canvasWrapper.style.cursor = 'crosshair';
             selectionBox.classList.add('mode-restore');
-            modeHint.textContent = '目前模式：範圍還原（按住左鍵拉出矩形，放開後恢復該區域原圖）';
+            modeHint.textContent = '目前模式：範圍還原（拉出矩形，瞬間補回整塊主體，如婚紗、西裝）';
         }
     }
 
@@ -506,6 +590,9 @@
     btnRestore.addEventListener('click', () => setMode('restore'));
     btnRectRestore.addEventListener('click', () => setMode('rect-restore'));
 
+    // ==========================================
+    // 4. 吸管運算邏輯
+    // ==========================================
     function hexToRgb(hex) {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : null;
@@ -544,6 +631,9 @@
         }
     });
 
+    // ==========================================
+    // 5. 畫面座標映射與智慧定焦筆刷
+    // ==========================================
     function getMousePos(e) {
         const rect = canvas.getBoundingClientRect();
         return {
@@ -554,7 +644,7 @@
         };
     }
 
-    canvasWrapper.addEventListener('mousedown', function(e) {
+    canvasContent.addEventListener('mousedown', function(e) {
         if (canvas.width === 0) return;
         const pos = getMousePos(e);
 
@@ -590,14 +680,14 @@
         }
     });
 
-    canvasWrapper.addEventListener('mousemove', function(e) {
+    canvasContent.addEventListener('mousemove', function(e) {
         if (!e || canvas.width === 0) return;
-        const rect = canvas.getBoundingClientRect();
         const pos = getMousePos(e);
 
-        if ((currentMode === 'eraser' || currentMode === 'restore') && e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+        // 智慧定焦筆刷視覺：永遠維持使用者設定的螢幕尺寸
+        if (currentMode === 'eraser' || currentMode === 'restore') {
             brushCursor.style.display = 'block';
-            const visualSize = parseInt(brushSizeSlider.value) * (rect.width / canvas.width);
+            const visualSize = parseInt(brushSizeSlider.value);
             brushCursor.style.width = `${visualSize}px`;
             brushCursor.style.height = `${visualSize}px`;
             brushCursor.style.left = `${pos.cssX}px`;
@@ -649,31 +739,38 @@
         }
     });
 
-    canvasWrapper.addEventListener('mouseleave', () => { brushCursor.style.display = 'none'; });
+    canvasContent.addEventListener('mouseleave', () => { brushCursor.style.display = 'none'; });
     brushSizeSlider.addEventListener('input', (e) => { document.getElementById('brushSizeValue').textContent = e.target.value; });
 
+    // 核心演算：筆刷作用範圍根據縮放比例「自動縮小」
     function applyBrush(currPos) {
-        const size = parseInt(brushSizeSlider.value);
+        const visualSize = parseInt(brushSizeSlider.value);
+        const rect = canvas.getBoundingClientRect();
+        
+        // 將螢幕的視覺尺寸，轉換為真實畫布上的對應像素尺寸 (放大時，對應像素變小)
+        const scaleFactor = canvas.width / rect.width;
+        const canvasBrushSize = visualSize * scaleFactor;
+
         if (currentMode === 'eraser') {
             ctx.globalCompositeOperation = 'destination-out';
             ctx.beginPath();
             ctx.moveTo(lastPos.x, lastPos.y);
             ctx.lineTo(currPos.x, currPos.y);
-            ctx.lineWidth = size;
+            ctx.lineWidth = canvasBrushSize; 
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.stroke();
         } else if (currentMode === 'restore') {
             ctx.globalCompositeOperation = 'source-over';
             const dist = Math.hypot(currPos.x - lastPos.x, currPos.y - lastPos.y);
-            const steps = Math.max(1, Math.ceil(dist / (size / 4))); 
+            const steps = Math.max(1, Math.ceil(dist / (canvasBrushSize / 4))); 
             for(let i = 0; i <= steps; i++) {
                 const t = i / steps;
                 const x = lastPos.x + (currPos.x - lastPos.x) * t;
                 const y = lastPos.y + (currPos.y - lastPos.y) * t;
                 ctx.save();
                 ctx.beginPath();
-                ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+                ctx.arc(x, y, canvasBrushSize / 2, 0, Math.PI * 2);
                 ctx.clip(); 
                 ctx.drawImage(originalCanvas, 0, 0); 
                 ctx.restore();
@@ -683,10 +780,8 @@
     }
 
     // ==========================================
-    // 5. 下載與無損深度壓縮模組
+    // 6. 下載與無損壓縮
     // ==========================================
-    
-    // 1. 一般原檔下載 (最快)
     btnDownload.addEventListener('click', () => {
         if (canvas.width === 0) return;
         const link = document.createElement('a');
@@ -695,26 +790,18 @@
         link.click();
     });
 
-    // 2. 絕對無損壓縮 (維持 100% 畫質與原尺寸，優化檔案結構來縮小 MB 數)
     btnCompressDownload.addEventListener('click', () => {
         if (canvas.width === 0) return;
         
-        // 防呆保護：鎖定按鈕並提示運算中
         const originalText = btnCompressDownload.innerHTML;
         btnCompressDownload.innerHTML = '⏳ 深度無損運算中...';
         btnCompressDownload.disabled = true;
         btnDownload.disabled = true;
 
-        // 給予瀏覽器極短暫的重繪時間來顯示「運算中」的文字，再進行高強度運算
         setTimeout(() => {
             try {
                 const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                
-                // 核心關鍵：將 cnum 參數設為 0
-                // 這會關閉色彩破壞性量化，改為執行深度的 ZLIB / DEFLATE 資料結構優化
-                // 保證顏色、漸層、解析度 100% 原汁原味
                 const compressedPng = UPNG.encode([imgData.data.buffer], canvas.width, canvas.height, 0);
-                
                 const blob = new Blob([compressedPng], { type: 'image/png' });
                 const url = URL.createObjectURL(blob);
                 
@@ -728,7 +815,6 @@
                 console.error("壓縮運算失敗:", error);
                 alert("照片像素過於龐大，運算超過瀏覽器負荷。建議直接使用原檔下載。");
             } finally {
-                // 恢復按鈕狀態
                 btnCompressDownload.innerHTML = originalText;
                 btnCompressDownload.disabled = false;
                 btnDownload.disabled = false;
